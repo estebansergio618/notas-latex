@@ -1,0 +1,175 @@
+\documentclass[10pt]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+% =================================================================
+\usepackage[x11names]{xcolor}
+% https://ctan.dcc.uchile.cl/macros/latex/contrib/xcolor/xcolor.pdf
+% Página39
+
+% ================CIRCULO TRIGONOMETRICO===========================
+\usepackage{tikz, tkz-euclide}
+% TikZ: https://www.ctan.org/pkg/pgf
+% tkz-euclide: https://www.ctan.org/pkg/tkz-euclide
+
+% =================================================================
+\usepackage{calculator}
+% % calculator: https://www.ctan.org/pkg/calculator
+
+% =====================DIAGRAMAS DE VENN===========================
+\usepackage{venndiagram}
+% https://ctan.dcc.uchile.cl/macros/latex/contrib/venndiagram/venndiagram.pdf
+% =================================================================
+
+% \geometry{a4paper, top=1.5cm, bottom=1cm}
+\title{TikZ \\ \normalsize Notas en \LaTeX}
+\author{Sergio Esteban Muñoz \\ \href{mailto: semunoz@dc.uba.ar}{\nolinkurl{semunoz@dc.uba.ar}}} 
+%\and Autor 2}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% =================================================================
+\chapter{Geometía con \LaTeX}
+Empiezo con Diagramas de Venn que utlice para escribir el solucionario de la \textbf{Práctica N°4} cuando curse \textbf{Algebra I}, luego con un programa para ver graficamente las raices de la unidad y finalmente me metere de lleno con el uso de los paquetes \texttt{tikz y tkz-euclide} para la grafica de figuras geométricas, el código estara en mi github para que puedas ver el código.
+
+\section{Diagramas de Venn}
+% ACapB=A intersección B
+% NotA = complemento de A
+% shade = sombra
+% label=etiqueta
+% scale sucede en las letras
+    \begin{venndiagram2sets}[shade=DeepPink1, radius=1.5cm, labelOnlyA=$x_1$]
+        \fillANotB
+    \end{venndiagram2sets}
+\hspace{1cm}
+    \begin{venndiagram3sets}[labelA=$T_1$, labelOnlyA=1, labelOnlyB=189, labelABC=1, labelNotABC=21, shade=LightSkyBlue2, radius=1cm, tikzoptions={scale=1.5, font=\large, draw=red}]
+        \fillACapBNotC
+    \end{venndiagram3sets}
+    
+% =================================================================
+
+\section{Circunferencia Trigonométrica(C.T)}
+	\begin{itemize}
+	    \item Se realizó un programa para la CT en \LaTeX. (\texttt{GitHub:@estebansergio618}) 
+	    \item En $\backslash$\texttt{def} $\backslash$\texttt{partes\{12\}} podemos cambiar en cuanto queremos partir la CT. (Máximo 12)
+	\end{itemize}
+	\\
+	\begin{tikzpicture}[scale=3]
+	
+	\tkzInit[xmin=-1.2, xmax=1, ymin=-1.2, ymax=1]
+	\tkzDrawXY[thick,noticks]
+	
+	\tkzDefPoints{0/0/O}
+	
+	\tkzDrawCircle[thin,R](O,1cm)
+	
+	\def\partes{12} 
+	\def\tipo{2}
+
+
+	\foreach \i in {1,2,...,\partes} {
+	\tkzDefPoint({cos(\i*2*pi/\partes)},{sin(\i*2*pi/\partes)}){P\i}
+	\tkzDrawPoint(P\i)
+	\tkzDrawSegment[ultra thin, dashed](O,P\i)
+		
+		
+	\MULTIPLY{2}{\i}{\pnumI}
+	\FRACTIONSIMPLIFY{\pnumI}{\partes}{\pnumII}{\pdenII}
+		
+	\ifnum\pdenII=1
+		\ifnum\pnumII=1
+			\tkzLabelSegment[above=-6pt, pos=0.8,fill=white](O,P\i){\(\pi\)}
+		\else
+			\tkzLabelSegment[above=-13pt, pos=0.8,fill=white](O,P\i){\(\pnumII \pi\)}
+			\tkzLabelSegment[above=-1pt, pos=0.8,fill=white](O,P\i){\(0\)}
+		\fi
+	\else
+		\ifnum\pnumII=1
+			\tkzLabelSegment[above=-10pt, pos=0.8,fill=white](O,P\i){\(\frac{\pi}{\pdenII}\)}
+		\else
+			\tkzLabelSegment[above=-10pt, pos=0.8,fill=white](O,P\i){\(\frac{\pnumII\pi}{\pdenII}\)}
+		\fi
+	\fi
+	}
+	\else
+		\ifnum\tipo=2
+		
+	\end{tikzpicture}
+% =================================================================
+
+\section{Triangulos (tkz-euclide)}
+
+    \begin{tikzpicture}[scale=2]
+    
+        % DEFINIR PUNTOS:
+        \tkzDefPoint(0,0){A}
+        \tkzDefPoint(4,0){B}
+        % coordenadas polares para definir:
+        \tkzDefPoint(130:3){C}
+        
+        % DIBUJAR SEGMENTOS
+        \tkzDrawPolygon(A,B,C)
+        \tkzDefLine[orthogonal=through C](A,B)\tkzGetPoint{c}
+        % TKZ INTER SECCION LINEA A LINEA:
+        \tkzInterLL(A,B)(C,c)\tkzGetPoint{D}
+        
+        
+        \tkzMarkAngle[size=.5, arrows= ->,>=stealth, color=red](B,A,C)
+        \tkzMarkAngle[size=.4, arrows= ->,>=stealth, color=blue](C,A,D)
+        \tkzMarkRightAngle[size=.3, color=blue, fill=blue!20, draw opacity=0](A,D,C)
+        
+        \tkzDrawSegment[dashed](C,D)
+        \tkzDrawLine[add=0cm and 1cm, dashed](A,D)
+        
+        % DIBUJAR PUNTOS
+        \tkzDrawPoints(A,B,C,D)
+        \tkzLabelPoints[below](A,D)
+        \tkzLabelPoints[right](B)
+        \tkzLabelPoints[above](C)
+        
+        \begin{scope}{font=\tiny}
+        
+        \tkzLabelSegment[below](A,B){$c$}
+        \tkzLabelSegment(A,C){$b$}
+        \tkzLabelSegment[above](B,C){$a$}
+        \tkzLabelSegment[left](C,D){$h$}
+        \tkzLabelAngle[pos=.7](B,A,C){$\widehat{A}$}
+        \tkzLabelAngle[pos=.5, left](C,A,D){$\pi-\widehat{A}$}
+        
+        \end{scope}
+        
+        
+    \end{tikzpicture}
+    
+    \subsection{Diseño de Polígonos Regulares}
+    
+    \begin{tikzpicture}
+    % sides=lados (lo puedo cambiar)
+        \tkzDefPoints(0/0/A, 1/0/B)
+        
+        \tkzDefRegPolygon[side,sides=5](A,B)\tkzGetPoint{O}
+        \tkzLabelRegPolygon(O){A,...,E}
+        \tkzDrawPolygon(P1,P2,P3,P4,P5)
+        \tkzDrawPoints(A,B)
+    \end{tikzpicture}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
